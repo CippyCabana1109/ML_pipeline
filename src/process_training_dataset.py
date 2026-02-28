@@ -7,13 +7,13 @@ def process_training_dataset():
     """
     Process NASA POWER weather data and prepare for solar forecasting
     """
-    print("Processing Weather Data.csv...")
+    print("Processing Weather_Data_Clean.csv...")
     
-    # Read NASA POWER weather data
-    df = pd.read_csv('data/Weather Data.csv', skiprows=17)  # Skip header rows
+    # Read cleaned NASA POWER weather data
+    df = pd.read_csv('data/Weather_Data_Clean.csv')
     
     # Convert date columns to timestamp
-    df['timestamp'] = pd.to_datetime(df[['YEAR', 'MO', 'DY', 'HR']].astype(str).agg('-'.join), format='%Y-%m-%d-%H')
+    df['timestamp'] = pd.to_datetime(df[['YEAR', 'MO', 'DY', 'HR']].astype(str).apply(lambda x: '-'.join(x), axis=1), format='%Y-%m-%d-%H')
     
     # Extract key weather variables
     df['irradiance'] = df['ALLSKY_SFC_SW_DWN']

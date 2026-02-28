@@ -48,6 +48,7 @@ data/processed/
 # Allow specific data files
 !data/Training_Dataset.csv
 !data/Weather Data.csv
+!data/Weather_Data_Clean.csv
 
 # Models
 *.pkl
