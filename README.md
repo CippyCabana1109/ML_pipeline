@@ -1,72 +1,44 @@
 # Solar PV Forecasting for Competitive Energy Markets
 
-## Overview
-This project implements and compares three advanced forecasting models for next-day solar PV generation prediction, enabling participation in competitive electricity markets through accurate bidding strategies.
+## 🎯 Objective
+Complete comparative evaluation of SARIMAX, XGBoost, and Prophet+XGBoost Hybrid models to determine the most accurate next-day solar PV generation prediction approach for competitive electricity market participation.
 
-## Objective
-Complete comparative evaluation of SARIMAX, XGBoost, and Prophet+XGBoost Hybrid models to determine the most accurate next-day solar PV generation prediction approach.
-
-## Models Implemented
+## 📊 Models Implemented
 1. **SARIMAX** - Statistical baseline with weather as exogenous inputs
-2. **XGBoost** - Machine learning regression model with lag features
+2. **XGBoost** - Machine learning regression model with lag features  
 3. **Prophet + XGBoost Hybrid** - Prophet forecast corrected using XGBoost residual modeling
 
-## Data
-- **PV Production**: 26 inverters, 5-minute intervals (Jan 2024 - Dec 2024)
-- **Weather Variables**: NASA POWER data (irradiance, temperature, humidity)
-- **Total Dataset**: 110,478 records
-- **Training Period**: Jan 2024 - Nov 2024 (94,177 records)
-- **Test Period**: Dec 1-7, 2024 (1,729 records)
-
-## Project Structure
+## 📁 Project Structure
 ```
-├── data/
-│   ├── Training_Dataset.csv          # Raw integrated weather + production data
-│   ├── processed_training_data.csv   # Cleaned dataset with features
-│   ├── train_final.csv               # Training data split
-│   └── test_final.csv                # Test data split
-├── notebooks/
-│   └── exploratory_analysis.ipynb    # Data exploration and visualization
-├── src/
-│   ├── phase1_data_ingestion.py      # Data preprocessing and merging
-│   ├── phase2_sarimax.py            # SARIMAX model implementation
-│   ├── phase3_xgboost.py             # XGBoost model implementation
-│   ├── phase4_evaluation.py          # Model comparison and evaluation
-│   └── utils.py                      # Utility functions
-├── results/
-│   ├── model_comparison.png          # Performance comparison plots
-│   ├── predictions_test_week.png     # Actual vs Predicted visualization
-│   ├── metrics_table.csv            # Final performance metrics
-│   └── error_analysis.png            # Error distribution analysis
-├── requirements.txt                  # Python dependencies
-├── plan.md                          # Detailed project plan
-├── .windsurfrules                   # Project rules and constraints
-└── README.md                        # This file
+solar-pv-forecasting/
+├── 📂 data/                     # Processed datasets (auto-generated)
+│   ├── Training_Dataset.csv       # Raw integrated weather + production data
+│   ├── processed_training_data.csv # Cleaned dataset with features
+│   ├── train_final.csv           # Training data split
+│   └── test_final.csv            # Test data split
+├── 📂 src/                      # Source code
+│   ├── utils.py                 # Utility functions
+│   ├── phase1_data_ingestion.py  # Data preprocessing
+│   ├── phase2_sarimax.py        # SARIMAX model
+│   ├── phase3_xgboost.py        # XGBoost model
+│   ├── phase4_hybrid.py         # Prophet+XGBoost hybrid
+│   └── phase5_evaluation.py     # Model comparison
+├── 📂 results/                  # Output files (auto-generated)
+│   ├── model_comparison.csv       # Performance metrics table
+│   ├── model_comparison.png       # Visualization plots
+│   ├── error_analysis.png        # Error distribution analysis
+│   └── operational_assessment.md # Business recommendations
+├── 📂 notebooks/               # Jupyter notebooks for exploration
+├── 🐍 run_complete_pipeline.py # Execute all phases
+├── 📋 requirements.txt          # Python dependencies
+├── 📄 plan.md                 # Detailed project plan
+└── 📄 .windsurfrules          # Project constraints & rules
 ```
 
-## Evaluation Metrics
-All models evaluated on the same test week using:
-- **MAE** (Mean Absolute Error)
-- **RMSE** (Root Mean Square Error)
-- **sMAPE** (Symmetric Mean Absolute Percentage Error - daytime only)
-- **R²** (Coefficient of Determination)
+## 🚀 Quick Start
 
-## Key Features
-- **No Data Leakage**: Strict temporal separation between training and testing
-- **Daytime Filtering**: sMAPE calculated only for hours with irradiance > 0
-- **Rolling Forecast**: Next-day prediction methodology
-- **Weather Integration**: Exogenous variables (irradiance, temperature, humidity)
-- **Temporal Features**: Hour, day of week, month, lag features (24h, 48h)
-
-## Installation
-
-### Prerequisites
-- Python 3.8+
-- Git
-
-### Setup
+### 1. Clone Repository
 ```bash
-# Clone repository
 git clone https://github.com/CippyCabana1109/ML_pipeline.git
 cd ML_pipeline
 

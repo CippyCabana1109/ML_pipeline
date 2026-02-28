@@ -5,52 +5,32 @@ import matplotlib.pyplot as plt
 
 def process_training_dataset():
     """
-    Process the provided Training_Dataset.csv which already contains
-    integrated weather and production data
+    Process NASA POWER weather data and prepare for solar forecasting
     """
-    print("Processing Training_Dataset.csv...")
+    print("Processing Weather Data.csv...")
     
-    # Read the dataset
-    df = pd.read_csv('data/Training_Dataset.csv')
+    # Read NASA POWER weather data
+    df = pd.read_csv('data/Weather Data.csv', skiprows=17)  # Skip header rows
     
-    # Convert DateTime to datetime first
-    df['timestamp'] = pd.to_datetime(df['DateTime'])
+    # Convert date columns to timestamp
+    df['timestamp'] = pd.to_datetime(df[['YEAR', 'MO', 'DY', 'HR']].astype(str).agg('-'.join), format='%Y-%m-%d-%H')
     
-    # Extract key weather variables (using original column names)
-    df['irradiance'] = df['All Sky Surface Shortwave Downward Irradiance \n(Wh/m2) ']
-    df['temperature'] = df['Temperature at 2 Meters (C) ']
-    df['humidity'] = df['Relative Humidity at 2 Meters (%) ']
+    # Extract key weather variables
+    df['irradiance'] = df['ALLSKY_SFC_SW_DWN']
+    df['temperature'] = df['T2M']
+    df['humidity'] = df['RH2M']
     
-    # Calculate total solar power from all inverters
-    power_columns = [col for col in df.columns if 'Production Power' in col and '(W)' in col]
-    df['solar_power_w'] = df[power_columns].sum(axis=1)
+    # For demonstration, create synthetic solar power based on irradiance
+    # In real implementation, this would come from actual solar panel data
+    df['solar_power_w'] = df['irradiance'] * 100  # Simple scaling for demo
     
-    # Create temporal features
-    df['hour'] = df['timestamp'].dt.hour
-    df['day_of_week'] = df['timestamp'].dt.dayofweek
-    df['month'] = df['timestamp'].dt.month
-    df['day_of_year'] = df['timestamp'].dt.dayofyear
+    # Filter out missing data values
+    df = df.replace(-999, np.nan).dropna()
     
-    # Create lag features
-    df['lag_24h'] = df['solar_power_w'].shift(96)  # 96 * 15min = 24h
-    df['lag_48h'] = df['solar_power_w'].shift(192)  # 192 * 15min = 48h
+    print(f"Dataset shape after processing: {df.shape}")
+    print(f"Date range: {df['timestamp'].min()} to {df['timestamp'].max()}")
     
-    # Select relevant columns for modeling
-    model_columns = [
-        'timestamp', 'solar_power_w', 'irradiance', 'temperature', 'humidity',
-        'hour', 'day_of_week', 'month', 'day_of_year', 'lag_24h', 'lag_48h'
-    ]
-    
-    df_model = df[model_columns].copy()
-    
-    # Remove rows with missing values
-    df_model = df_model.dropna()
-    
-    print(f"Dataset shape after processing: {df_model.shape}")
-    print(f"Date range: {df_model['timestamp'].min()} to {df_model['timestamp'].max()}")
-    print(f"Missing values: {df_model.isnull().sum().sum()}")
-    
-    return df_model
+    return df
 
 def create_training_test_split(df):
     """
@@ -118,20 +98,31 @@ def analyze_data_quality(df):
 
 def main():
     """
-    Main processing function
+    Main execution function for Phase 1
     """
     print("=" * 60)
-    print("PROCESSING PROVIDED TRAINING DATASET")
+    print("PHASE 1: NASA WEATHER DATA INGESTION & PREPROCESSING")
     print("=" * 60)
     
     # Process the dataset
     df = process_training_dataset()
     
-    # Create daytime filter
-    df = create_daytime_filter(df)
+    # Create temporal features
+    df['hour'] = df['timestamp'].dt.hour
+    df['day_of_week'] = df['timestamp'].dt.dayofweek
+    df['month'] = df['timestamp'].dt.month
+    df['day_of_year'] = df['timestamp'].dt.dayofyear
     
-    # Analyze data quality
-    analyze_data_quality(df)
+    # Create lag features
+    df['lag_24h'] = df['solar_power_w'].shift(96)  # 96 * 1hr = 96h for hourly data
+    df['lag_48h'] = df['solar_power_w'].shift(192) # 192 * 1hr = 192h for hourly data
+    
+    # Create daytime filter
+    df['is_daytime'] = df['irradiance'] > 0
+    daytime_count = df['is_daytime'].sum()
+    total_count = len(df)
+    
+    print(f"Daytime records: {daytime_count}/{total_count} ({daytime_count/total_count*100:.1f}%)")
     
     # Split into training and test sets
     train_df, test_df = create_training_test_split(df)

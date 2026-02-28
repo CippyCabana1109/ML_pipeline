@@ -39,12 +39,15 @@ venv.bak/
 .ipynb_checkpoints
 
 # Data Files (keep raw data, ignore processed)
-data/raw/
 data/processed/
 *.csv
 *.xlsx
 *.json
 *.parquet
+
+# Allow specific data files
+!data/Training_Dataset.csv
+!data/Weather Data.csv
 
 # Models
 *.pkl
