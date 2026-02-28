@@ -1,0 +1,22 @@
+# Solar Forecasting Project Rules
+
+## Context & Data
+- **Objective**: Compare SARIMAX, XGBoost, and Prophet+XGBoost Hybrid models for next-day bidding.
+- **Timeline**: Training (Jan 2024 – Feb 2025), Testing (March 1–7, 2025).
+- **Data Location**: Raw production in `@Solar_Production_Data/`, weather in NASA POWER CSV.
+- **Primary Key**: All data must be synchronized on a 'timestamp' column.
+
+## Modeling Constraints
+- **No Data Leakage**: Never use information from the test week (March 2025) during the training phase.
+- **Exogenous Variables**: For SARIMAX and XGBoost, always include irradiance, temperature, and humidity as features.
+- **Daytime Only**: When calculating sMAPE, filter for hours where Irradiance > 0 to avoid zero-inflation errors.
+
+## Model Logic
+1. **SARIMAX**: Use (p,d,q)x(P,D,Q)s with weather as `exog` inputs.
+2. **XGBoost**: Include lag features (t-24h, t-48h) and temporal features (hour, day_of_week).
+3. **Hybrid**: Train Prophet on the trend, then train XGBoost on the residuals (Actual - Prophet_Pred).
+
+## Evaluation Standards
+Every model run must output a table with:
+- MAE, RMSE, sMAPE, and R².
+- A plot of "Actual vs. Predicted" for the March test week.
