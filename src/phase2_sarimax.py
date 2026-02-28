@@ -210,8 +210,8 @@ def main():
     print("=" * 60)
     
     # Load processed data
-    train_df = pd.read_csv('train_final.csv')
-    test_df = pd.read_csv('test_final.csv')
+    train_df = pd.read_csv('data/train_final.csv')
+    test_df = pd.read_csv('data/test_final.csv')
     
     # Convert timestamp
     train_df['timestamp'] = pd.to_datetime(train_df['timestamp'])
@@ -257,7 +257,7 @@ def main():
         'actual': target_test,
         'sarimax_predicted': evaluation_results['predictions']
     })
-    results_df.to_csv('sarimax_results.csv', index=False)
+    results_df.to_csv('results/sarimax_results.csv', index=False)
     
     print(f"\nPhase 2 completed!")
     print("Files saved:")

@@ -11,7 +11,7 @@ def process_training_dataset():
     print("Processing Training_Dataset.csv...")
     
     # Read the dataset
-    df = pd.read_csv('Training_Dataset.csv')
+    df = pd.read_csv('data/Training_Dataset.csv')
     
     # Convert DateTime to datetime first
     df['timestamp'] = pd.to_datetime(df['DateTime'])
@@ -137,9 +137,9 @@ def main():
     train_df, test_df = create_training_test_split(df)
     
     # Save processed datasets
-    df.to_csv('processed_training_data.csv', index=False)
-    train_df.to_csv('train_final.csv', index=False)
-    test_df.to_csv('test_final.csv', index=False)
+    df.to_csv('data/processed_training_data.csv', index=False)
+    train_df.to_csv('data/train_final.csv', index=False)
+    test_df.to_csv('data/test_final.csv', index=False)
     
     print(f"\nFiles saved:")
     print(f"- processed_training_data.csv: {len(df)} records")
