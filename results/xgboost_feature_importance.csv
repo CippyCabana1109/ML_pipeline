@@ -1,0 +1,15 @@
+feature,importance
+irradiance,0.6143028
+irradiance_temp,0.37517536
+irradiance_humidity,0.0048126713
+hour,0.0026896528
+temperature,0.0015088497
+hour_sin,0.00068141497
+month_cos,0.00022595702
+humidity,0.00017289293
+month,0.00016886483
+lag_24h,0.00015974116
+lag_48h,8.572127e-05
+month_sin,1.6094626e-05
+day_of_week,0.0
+hour_cos,0.0

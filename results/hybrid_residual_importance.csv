@@ -1,0 +1,9 @@
+feature,importance
+irradiance,0.24735431
+hour,0.1985702
+lag_24h,0.1356899
+temperature,0.12795064
+humidity,0.11510632
+month,0.10242741
+lag_48h,0.049699806
+day_of_week,0.023201387
