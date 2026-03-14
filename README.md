@@ -14,7 +14,7 @@ solar-pv-forecasting/
 ├── 📂 data/                     # Processed datasets (auto-generated)
 │   ├── Weather_Data_Clean.csv    # NASA POWER weather data (2024)
 │   ├── processed_training_data.csv # Cleaned dataset with features
-│   ├── train_final.csv           # Training data split (Jan-Nov 2024)
+│   ├── train_final.csv           # Solar PV Forecasting System
 │   └── test_final.csv            # Test data split (Dec 1-7, 2024)
 ├── 📂 src/                      # Source code
 │   ├── utils.py                 # Utility functions
@@ -53,9 +53,41 @@ pip install -r requirements.txt
 
 ### 3. Run Complete Pipeline
 ```bash
-# Execute all phases sequentially
+# Execute all phases sequentially with enhanced analysis
 python run_complete_pipeline.py
 ```
+
+### 4. Enhanced Analysis Options
+```bash
+# Run only enhanced evaluation (after models are trained)
+python src/enhanced_evaluation.py
+
+# Run specific analyses
+python -c "from enhanced_analysis import *; plot_ideal_solar_curve(pd.read_csv('data/processed_training_data.csv'))"
+```
+
+## 📊 Enhanced Features
+
+### ✅ **Comprehensive Analysis Suite**
+1. **Ideal Solar Generation Curve**: Establishes baseline production patterns
+2. **Correlation & VIF Analysis**: Feature optimization and multicollinearity detection
+3. **Weighted Performance Scoring**: Business-relevant model evaluation
+4. **Hourly Error Analysis**: Operational characteristics identification
+5. **Iterative Learning**: Continuous model improvement analysis
+6. **Energy Market Impact**: Financial implications assessment
+
+### 🎯 **Advanced Evaluation Metrics**
+- **RMSE (40% weight)**: Penalizes large errors
+- **MAE (30% weight)**: Direct business impact
+- **sMAPE (20% weight)**: Relative accuracy
+- **R² (10% weight)**: Model fit quality
+
+### 📈 **Visual Analytics**
+- Comprehensive model comparison dashboard
+- Performance radar charts
+- Error distribution analysis
+- Business impact visualization
+- Iterative learning curves
 
 ### 4. Run Individual Phases
 ```bash
