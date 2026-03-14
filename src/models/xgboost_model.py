@@ -5,9 +5,18 @@ import xgboost as xgb
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import warnings
+import os
+import sys
+
 warnings.filterwarnings('ignore')
 
-# Import utility functions
+# Ensure the src/ directory is on sys.path so we can import utils when this
+# file is executed as a script via `python src/models/xgboost_model.py`.
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+SRC_ROOT = os.path.dirname(CURRENT_DIR)
+if SRC_ROOT not in sys.path:
+    sys.path.insert(0, SRC_ROOT)
+
 from utils import calculate_metrics, create_daytime_filter, save_results
 
 def prepare_xgboost_features(train_df, test_df):
@@ -15,11 +24,14 @@ def prepare_xgboost_features(train_df, test_df):
     Prepare features for XGBoost model
     """
     print("Preparing XGBoost features...")
+    print(f"  Input: {len(train_df)} train, {len(test_df)} test records")
     
     # Combine train and test for consistent feature engineering
+    print("  Combining datasets...")
     full_df = pd.concat([train_df, test_df], ignore_index=True)
     
     # Create additional features
+    print("  Creating feature columns...")
     full_df['is_daytime'] = create_daytime_filter(full_df['irradiance'])
     
     # Weather interaction features
@@ -47,11 +59,11 @@ def prepare_xgboost_features(train_df, test_df):
     ]
     
     # Remove rows with NaN values (from lag features)
+    print("  Removing NaN rows...")
     train_clean = train_features.dropna(subset=feature_columns + ['solar_power_w'])
     test_clean = test_features.dropna(subset=feature_columns + ['solar_power_w'])
     
-    print(f"Training data: {len(train_clean)} records")
-    print(f"Test data: {len(test_clean)} records")
+    print(f"  Final: {len(train_clean)} train, {len(test_clean)} test records")
     
     return train_clean, test_clean, feature_columns
 
@@ -107,18 +119,23 @@ def train_xgboost_model(train_df, feature_columns, optimize_params=True):
     if optimize_params:
         model = optimize_xgboost_hyperparameters(X_train, y_train)
     else:
-        # Use default parameters
+        # Use a very fast configuration for full-pipeline runs
+        print("Training fast XGBoost model (no grid search)...")
+        print(f"  Training on {len(X_train)} samples with {len(feature_columns)} features...")
         model = xgb.XGBRegressor(
-            n_estimators=200,
-            max_depth=8,
-            learning_rate=0.1,
+            n_estimators=30,  # Even fewer trees for speed
+            max_depth=3,      # Shallower trees
+            learning_rate=0.3,
             subsample=0.8,
             colsample_bytree=0.8,
             objective='reg:squarederror',
             random_state=42,
-            n_jobs=-1
+            n_jobs=-1,
+            verbosity=0,  # Suppress XGBoost output
         )
+        print("  Fitting model...")
         model.fit(X_train, y_train)
+        print("  Model fit complete!")
     
     # Feature importance
     feature_importance = pd.DataFrame({
@@ -187,7 +204,7 @@ def evaluate_xgboost_model(model, test_df, feature_columns):
     
     plt.tight_layout()
     plt.savefig('results/xgboost_predictions.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    plt.close()  # Close instead of show() to avoid blocking in pipeline
     
     # Save results
     results_df = pd.DataFrame({
@@ -214,8 +231,10 @@ def main():
     print("=" * 60)
     
     # Load processed data
+    print("Loading data files...")
     train_df = pd.read_csv('data/train_final.csv')
     test_df = pd.read_csv('data/test_final.csv')
+    print(f"  Loaded: {len(train_df)} train, {len(test_df)} test")
     
     # Convert timestamp
     train_df['timestamp'] = pd.to_datetime(train_df['timestamp'])
@@ -224,8 +243,12 @@ def main():
     # Prepare features
     train_clean, test_clean, feature_columns = prepare_xgboost_features(train_df, test_df)
     
-    # Train model
-    xgb_model, feature_importance = train_xgboost_model(train_clean, feature_columns)
+    # Train model (use fast default params, skip GridSearchCV to avoid long runs)
+    xgb_model, feature_importance = train_xgboost_model(
+        train_clean,
+        feature_columns,
+        optimize_params=False,
+    )
     
     # Evaluate model
     evaluation_results = evaluate_xgboost_model(xgb_model, test_clean, feature_columns)

@@ -5,9 +5,18 @@ from prophet import Prophet
 import xgboost as xgb
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import warnings
+import os
+import sys
+
 warnings.filterwarnings('ignore')
 
-# Import utility functions
+# Ensure the src/ directory is on sys.path so we can import utils when this
+# file is executed as a script via `python src/models/hybrid_model.py`.
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+SRC_ROOT = os.path.dirname(CURRENT_DIR)
+if SRC_ROOT not in sys.path:
+    sys.path.insert(0, SRC_ROOT)
+
 from utils import calculate_metrics, create_daytime_filter, save_results
 
 def prepare_prophet_data(df):
@@ -26,30 +35,32 @@ def train_prophet_model(train_df):
     
     # Prepare data for Prophet
     prophet_train = prepare_prophet_data(train_df)
+    print(f"  Prophet training rows: {len(prophet_train)}")
     
-    # Create Prophet model with custom seasonality
+    # Create a lighter Prophet model for faster training
     prophet_model = Prophet(
-        yearly_seasonality=True,
+        yearly_seasonality=False,
         weekly_seasonality=True,
         daily_seasonality=True,
         changepoint_prior_scale=0.05,
-        seasonality_prior_scale=10.0,
-        holidays_prior_scale=10.0,
+        seasonality_prior_scale=5.0,
+        holidays_prior_scale=5.0,
         mcmc_samples=0,
-        interval_width=0.8,
-        uncertainty_samples=1000
+        interval_width=0.9,
+        uncertainty_samples=0,  # deterministic, faster
     )
     
-    # Add custom seasonality for solar patterns
+    # Add custom seasonality for solar patterns (reduced complexity)
     prophet_model.add_seasonality(
         name='hourly_solar',
         period=1,
-        fourier_order=8,
-        prior_scale=10.0
+        fourier_order=4,
+        prior_scale=5.0,
     )
     
-    # Fit the model
+    print("  Fitting Prophet model...")
     prophet_model.fit(prophet_train)
+    print("  Prophet fit complete!")
     
     return prophet_model
 
@@ -126,20 +137,24 @@ def train_residual_xgboost(train_df, train_residuals, feature_columns):
     # Prepare features and target
     X_train = residual_train_clean[feature_columns]
     y_train = residual_train_clean['residual']
+    print(f"  Residual training rows: {len(X_train)}")
     
-    # Train XGBoost for residuals
+    # Train a lighter XGBoost model for residuals
     residual_model = xgb.XGBRegressor(
-        n_estimators=200,
-        max_depth=6,
-        learning_rate=0.1,
+        n_estimators=50,
+        max_depth=4,
+        learning_rate=0.2,
         subsample=0.8,
         colsample_bytree=0.8,
         objective='reg:squarederror',
         random_state=42,
-        n_jobs=-1
+        n_jobs=-1,
+        verbosity=0,
     )
     
+    print("  Fitting residual XGBoost...")
     residual_model.fit(X_train, y_train)
+    print("  Residual XGBoost fit complete!")
     
     # Feature importance for residuals
     feature_importance = pd.DataFrame({
@@ -235,7 +250,8 @@ def evaluate_hybrid_model(hybrid_predictions, actual_values, test_df_clean):
     
     plt.tight_layout()
     plt.savefig('results/hybrid_predictions.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    # Close instead of show() to avoid blocking in pipeline runs
+    plt.close()
     
     # Save results
     results_df = pd.DataFrame({

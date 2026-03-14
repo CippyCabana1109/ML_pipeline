@@ -1,19 +1,31 @@
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+import xgboost as xgb
+import warnings
+import os
+import sys
+
+warnings.filterwarnings('ignore')
+
+# Ensure the src/ directory is on sys.path so `enhanced_analysis` shim is importable
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+SRC_ROOT = os.path.dirname(CURRENT_DIR)
+if SRC_ROOT not in sys.path:
+    sys.path.insert(0, SRC_ROOT)
+
 from enhanced_analysis import (
-    plot_ideal_solar_curve, 
-    correlation_vif_analysis, 
+    plot_ideal_solar_curve,
+    correlation_vif_analysis,
     calculate_weighted_score,
     hourly_error_analysis,
     iterative_learning,
-    energy_market_impact_analysis
+    energy_market_impact_analysis,
 )
-import xgboost as xgb
-import warnings
-warnings.filterwarnings('ignore')
 
 def load_all_results():
     """
@@ -35,7 +47,7 @@ def load_all_results():
             'r2': calculate_r2(sarimax_df['actual'], sarimax_df['sarimax_predicted']),
             'data': sarimax_df
         }
-        print("✅ SARIMAX results loaded")
+        print("SARIMAX results loaded")
     except FileNotFoundError:
         print("⚠️  SARIMAX results not found")
     
@@ -50,9 +62,24 @@ def load_all_results():
             'r2': calculate_r2(xgb_df['actual'], xgb_df['xgboost_predicted']),
             'data': xgb_df
         }
-        print("✅ XGBoost results loaded")
+        print("XGBoost results loaded")
     except FileNotFoundError:
         print("⚠️  XGBoost results not found")
+    
+    # Load Prophet results (if available)
+    try:
+        prophet_df = pd.read_csv('results/prophet_results.csv')
+        prophet_df['timestamp'] = pd.to_datetime(prophet_df['timestamp'])
+        model_results['Prophet'] = {
+            'mae': np.mean(np.abs(prophet_df['actual'] - prophet_df['prophet_predicted'])),
+            'rmse': np.sqrt(np.mean((prophet_df['actual'] - prophet_df['prophet_predicted'])**2)),
+            'smape': calculate_smape(prophet_df['actual'], prophet_df['prophet_predicted']),
+            'r2': calculate_r2(prophet_df['actual'], prophet_df['prophet_predicted']),
+            'data': prophet_df
+        }
+        print("Prophet results loaded")
+    except FileNotFoundError:
+        print("⚠️  Prophet results not found")
     
     # Load Hybrid results (if available)
     try:
@@ -65,7 +92,7 @@ def load_all_results():
             'r2': calculate_r2(hybrid_df['actual'], hybrid_df['hybrid_predicted']),
             'data': hybrid_df
         }
-        print("✅ Hybrid results loaded")
+        print("Hybrid results loaded")
     except FileNotFoundError:
         print("⚠️  Hybrid results not found")
     
@@ -130,7 +157,7 @@ def create_enhanced_comparison_table(model_results):
     # Sort by weighted score (primary) then by MAE (secondary)
     comparison_df = comparison_df.sort_values(['Weighted Rank', 'MAE Rank'])
     
-    print("\n🏆 Enhanced Model Performance Comparison:")
+    print("\nEnhanced Model Performance Comparison:")
     print("=" * 80)
     print(comparison_df.round(4))
     
@@ -177,7 +204,7 @@ def create_comprehensive_visualizations(model_results, comparison_df):
     # Plot 2: R² Comparison
     ax2 = fig.add_subplot(gs[0, 2])
     r2_values = [model_results[model]['r2'] for model in models]
-    bars = ax2.bar(models, r2_values, color=['skyblue', 'lightgreen', 'salmon'], alpha=0.8)
+    bars = ax2.bar(models, r2_values, color=['skyblue', 'lightgreen', 'salmon', 'gold'], alpha=0.8)
     ax2.set_ylabel('R² Score')
     ax2.set_title('R² Score Comparison', fontweight='bold')
     ax2.set_ylim(0, 1)
@@ -246,7 +273,7 @@ def create_comprehensive_visualizations(model_results, comparison_df):
     angles = np.linspace(0, 2 * np.pi, len(categories), endpoint=False).tolist()
     angles += angles[:1]  # Complete the circle
     
-    colors = ['blue', 'green', 'red']
+    colors = ['blue', 'green', 'red', 'orange']
     for i, model_name in enumerate(models):
         values = [
             1 - (model_results[model_name]['mae'] / 2000),  # Normalize MAE (assuming max 2000W)
@@ -276,7 +303,7 @@ def create_comprehensive_visualizations(model_results, comparison_df):
         impact_score = max(0, 100 - (mae / 20))  # Scale to 0-100
         impact_data.append(impact_score)
     
-    bars = ax7.bar(models, impact_data, color=['green', 'yellow', 'orange'], alpha=0.8)
+    bars = ax7.bar(models, impact_data, color=['green', 'yellow', 'orange', 'blue'], alpha=0.8)
     ax7.set_ylabel('Business Impact Score (0-100)')
     ax7.set_title('Business Impact Assessment', fontweight='bold')
     ax7.set_ylim(0, 100)
@@ -292,8 +319,8 @@ def create_comprehensive_visualizations(model_results, comparison_df):
                 fontsize=18, fontweight='bold', y=0.98)
     
     # Save the comprehensive plot
-    plt.savefig('results/comprehensive_evaluation.png', dpi=300, bbox_inches='tight')
-    plt.show()
+    plt.savefig('results/comprehensive_evaluation.png', dpi=300, bbox_inches='tight', metadata=None)
+    # plt.show()  # Commented out for non-interactive backend
     
     return fig
 
@@ -325,11 +352,11 @@ def run_iterative_learning_analysis(model_results):
             xgb.XGBRegressor, X_train, y_train, X_test, y_test
         )
         
-        print("✅ Iterative learning analysis completed")
+        print("Iterative learning analysis completed")
         return errors, results
         
     except Exception as e:
-        print(f"⚠️  Iterative learning analysis failed: {e}")
+        print(f"Warning: Iterative learning analysis failed: {e}")
         return None, None
 
 def generate_comprehensive_report(comparison_df, model_results):
@@ -344,7 +371,7 @@ def generate_comprehensive_report(comparison_df, model_results):
     report = f"""
 # SOLAR PV FORECASTING - COMPREHENSIVE EVALUATION REPORT
 
-## 🏆 EXECUTIVE SUMMARY
+## EXECUTIVE SUMMARY
 
 **Best Performing Model**: {best_model}
 **Weighted Performance Score**: {best_metrics['Weighted Score']:.4f}
@@ -357,48 +384,48 @@ def generate_comprehensive_report(comparison_df, model_results):
 
 ---
 
-## 📊 DETAILED MODEL COMPARISON
+## DETAILED MODEL COMPARISON
 
 {comparison_df.round(4).to_string()}
 
 ---
 
-## 🔍 ANALYSIS INSIGHTS
+## ANALYSIS INSIGHTS
 
 ### 1. Ideal Solar Generation Curve Analysis
-✅ **Completed**: Established baseline solar production pattern
+**Completed**: Established baseline solar production pattern
 - Confirms realistic daily solar behavior
 - Peak production identified at midday hours
 - Validates data integrity and consistency
 
 ### 2. Correlation and VIF Analysis  
-✅ **Completed**: Feature selection optimization
+**Completed**: Feature selection optimization
 - Multicollinearity assessed through VIF
 - Redundant variables identified and removed
 - Optimal feature set determined
 
 ### 3. Forecast Error by Hour Analysis
-✅ **Completed**: Operational characteristics identified
+**Completed**: Operational characteristics identified
 - Morning ramp-up errors: Higher due to rapid irradiance changes
 - Midday stability: Most accurate predictions during peak production
 - Evening ramp-down errors: Increased uncertainty during sunset transition
 
 ### 4. Weighted Performance Evaluation
-✅ **Completed**: Comprehensive scoring with business-relevant weights:
+**Completed**: Comprehensive scoring with business-relevant weights:
 - **RMSE (40% weight)**: Penalizes large errors heavily
 - **MAE (30% weight)**: Direct business impact metric
 - **sMAPE (20% weight)**: Relative accuracy assessment
 - **R² (10% weight)**: Model fit quality
 
 ### 5. Iterative Learning Analysis
-✅ **Completed**: Model adaptation potential demonstrated
+**Completed**: Model adaptation potential demonstrated
 - Continuous improvement through data incorporation
 - Convergence behavior analyzed
 - Optimal retraining frequency identified
 
 ---
 
-## 💼 BUSINESS IMPACT ASSESSMENT
+## BUSINESS IMPACT ASSESSMENT
 
 ### Energy Market Implications:
 - **Day-Ahead Bidding**: Improved accuracy enhances competitive positioning
@@ -417,7 +444,7 @@ def generate_comprehensive_report(comparison_df, model_results):
 
 ---
 
-## 🎯 IMPLEMENTATION RECOMMENDATIONS
+## IMPLEMENTATION RECOMMENDATIONS
 
 ### Immediate Actions (Next 30 Days):
 1. **Deploy {best_model}** as primary forecasting model
@@ -437,9 +464,11 @@ def generate_comprehensive_report(comparison_df, model_results):
 3. **Advanced AI**: Explore deep learning and transformer models
 4. **Regulatory compliance**: Ensure market rule adherence
 
+4. **Regulatory compliance**: Ensure market rule adherence
+
 ---
 
-## 📈 PERFORMANCE MONITORING
+## PERFORMANCE MONITORING
 
 ### Key Metrics to Track:
 - **Daily MAE**: Target < {best_metrics['MAE (W)'] * 1.1:.0f}W
@@ -453,7 +482,7 @@ def generate_comprehensive_report(comparison_df, model_results):
 
 ---
 
-## ✅ CONCLUSION
+## CONCLUSION
 
 This comprehensive evaluation demonstrates that **{best_model}** provides the optimal balance of accuracy, reliability, and operational practicality for solar PV forecasting in competitive energy markets.
 
@@ -476,9 +505,9 @@ The system is **production-ready** with:
     with open('results/comprehensive_evaluation_report.md', 'w') as f:
         f.write(report)
     
-    print("✅ Comprehensive report saved to results/comprehensive_evaluation_report.md")
+    print("Comprehensive report saved to results/comprehensive_evaluation_report.md")
     print("\n" + "="*80)
-    print("🎉 COMPREHENSIVE EVALUATION COMPLETE!")
+    print("COMPREHENSIVE EVALUATION COMPLETE!")
     print("="*80)
     
     return report
@@ -495,7 +524,7 @@ def main():
     try:
         processed_df = pd.read_csv('data/processed_training_data.csv')
         processed_df['timestamp'] = pd.to_datetime(processed_df['timestamp'])
-        print("✅ Processed data loaded for enhanced analysis")
+        print("Processed data loaded for enhanced analysis")
     except FileNotFoundError:
         print("⚠️  Processed data not found. Some analyses may be skipped.")
         processed_df = None
@@ -521,7 +550,7 @@ def main():
     model_results = load_all_results()
     
     if len(model_results) == 0:
-        print("❌ No model results found. Please run previous phases first.")
+        print("No model results found. Please run previous phases first.")
         return
     
     # 4. Enhanced Comparison with Weighted Scoring
@@ -532,14 +561,14 @@ def main():
     
     # Save comparison table
     comparison_df.to_csv('results/enhanced_model_comparison.csv')
-    print("✅ Enhanced comparison table saved")
+    print("Enhanced comparison table saved")
     
     # 5. Comprehensive Visualizations
     print("\n" + "="*50)
     print("5. COMPREHENSIVE VISUALIZATIONS")
     print("="*50)
     create_comprehensive_visualizations(model_results, comparison_df)
-    print("✅ Comprehensive visualizations saved")
+    print("Comprehensive visualizations saved")
     
     # 6. Hourly Error Analysis
     print("\n" + "="*50)
@@ -554,7 +583,7 @@ def main():
         best_data[pred_col], 
         best_data['timestamp']
     )
-    print("✅ Hourly error analysis completed")
+    print("Hourly error analysis completed")
     
     # 7. Iterative Learning Analysis
     print("\n" + "="*50)
@@ -567,9 +596,10 @@ def main():
     print("8. ENERGY MARKET IMPACT ANALYSIS")
     print("="*50)
     market_impact = energy_market_impact_analysis(
-        comparison_df.loc[best_model, 'MAE (W)']
+        comparison_df.loc[best_model, 'MAE (W)'],
+        comparison_df.loc[best_model, 'RMSE (W)']
     )
-    print("✅ Energy market impact analysis completed")
+    print("Energy market impact analysis completed")
     
     # 9. Generate Comprehensive Report
     print("\n" + "="*50)
@@ -578,24 +608,24 @@ def main():
     final_report = generate_comprehensive_report(comparison_df, model_results)
     
     print("\n" + "="*80)
-    print("🏆 ALL ENHANCED ANALYSES COMPLETED SUCCESSFULLY!")
+    print("ALL ENHANCED ANALYSES COMPLETED SUCCESSFULLY!")
     print("="*80)
     
     print("Files generated:")
-    print("📊 Enhanced Analysis:")
+    print("Enhanced Analysis:")
     print("   - results/ideal_solar_curve.png")
     print("   - results/correlation_vif_analysis.png")
     print("   - results/hourly_error_analysis.png")
     print("   - results/iterative_learning.png")
     print("   - results/market_impact.png")
-    print("📈 Model Evaluation:")
+    print("Model Evaluation:")
     print("   - results/enhanced_model_comparison.csv")
     print("   - results/comprehensive_evaluation.png")
     print("   - results/comprehensive_evaluation_report.md")
     
-    print(f"\n🎯 Best performing model: {best_model}")
-    print(f"📊 Weighted score: {comparison_df.loc[best_model, 'Weighted Score']:.4f}")
-    print(f"💰 Business impact: High - Ready for energy market deployment")
+    print(f"\nBest performing model: {best_model}")
+    print(f"Weighted score: {comparison_df.loc[best_model, 'Weighted Score']:.4f}")
+    print(f"Business impact: High - Ready for energy market deployment")
     
     return comparison_df, model_results
 

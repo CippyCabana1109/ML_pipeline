@@ -2,6 +2,16 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
+import sys
+
+# Ensure the src/ directory is on sys.path so we can import utils when this
+# file is executed as a script via `python src/evaluation/model_evaluation.py`.
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+SRC_ROOT = os.path.dirname(CURRENT_DIR)
+if SRC_ROOT not in sys.path:
+    sys.path.insert(0, SRC_ROOT)
+
 from utils import format_metrics_table, save_results
 
 def load_all_results():
@@ -23,7 +33,7 @@ def load_all_results():
             'r2': calculate_r2(sarimax_df['actual'], sarimax_df['sarimax_predicted']),
             'data': sarimax_df
         }
-        print("✅ SARIMAX results loaded")
+        print("SARIMAX results loaded")
     except FileNotFoundError:
         print("⚠️  SARIMAX results not found")
     
@@ -37,7 +47,7 @@ def load_all_results():
             'r2': calculate_r2(xgb_df['actual'], xgb_df['xgboost_predicted']),
             'data': xgb_df
         }
-        print("✅ XGBoost results loaded")
+        print("XGBoost results loaded")
     except FileNotFoundError:
         print("⚠️  XGBoost results not found")
     
@@ -51,7 +61,7 @@ def load_all_results():
             'r2': calculate_r2(hybrid_df['actual'], hybrid_df['hybrid_predicted']),
             'data': hybrid_df
         }
-        print("✅ Hybrid results loaded")
+        print("Hybrid results loaded")
     except FileNotFoundError:
         print("⚠️  Hybrid results not found")
     
@@ -346,8 +356,8 @@ def generate_operational_assessment(comparison_df, model_results):
     # Save assessment
     with open('results/operational_assessment.md', 'w') as f:
         f.write(assessment)
-    
-    print("✅ Operational assessment saved to results/operational_assessment.md")
+
+    print("Operational assessment saved to results/operational_assessment.md")
     
     return assessment
 
@@ -363,7 +373,7 @@ def main():
     model_results = load_all_results()
     
     if len(model_results) == 0:
-        print("❌ No model results found. Please run previous phases first.")
+        print("No model results found. Please run previous phases first.")
         return
     
     # Create comparison table
@@ -371,15 +381,15 @@ def main():
     
     # Save comparison table
     comparison_df.to_csv('results/model_comparison.csv')
-    print("✅ Comparison table saved to results/model_comparison.csv")
+    print("Comparison table saved to results/model_comparison.csv")
     
     # Create visualizations
     create_visualization_plots(model_results, comparison_df)
-    print("✅ Comparison plots saved to results/model_comparison.png")
+    print("Comparison plots saved to results/model_comparison.png")
     
     # Create error analysis
     create_error_analysis(model_results)
-    print("✅ Error analysis saved to results/error_analysis.png")
+    print("Error analysis saved to results/error_analysis.png")
     
     # Generate operational assessment
     assessment = generate_operational_assessment(comparison_df, model_results)
@@ -393,8 +403,8 @@ def main():
     print("- results/error_analysis.png")
     print("- results/operational_assessment.md")
     
-    print(f"\n🏆 Best performing model: {comparison_df.index[0]}")
-    print(f"📊 Overall rank: {comparison_df['Overall Rank'].iloc[0]:.2f}")
+    print(f"\nBest performing model: {comparison_df.index[0]}")
+    print(f"Overall rank: {comparison_df['Overall Rank'].iloc[0]:.2f}")
     
     return comparison_df, model_results
 

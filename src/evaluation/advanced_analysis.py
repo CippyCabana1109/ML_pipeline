@@ -1,5 +1,7 @@
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')  # Use non-interactive backend
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
@@ -34,8 +36,8 @@ def plot_ideal_solar_curve(df, save_path='results/ideal_solar_curve.png'):
     plt.tight_layout()
     
     # Save plot
-    plt.savefig(save_path, dpi=300, bbox_inches='tight')
-    plt.show()
+    plt.savefig(save_path, dpi=300, bbox_inches='tight', metadata=None)
+    # plt.show()  # Commented out for non-interactive backend
     
     # Interpretation
     peak_hour = hourly_avg.idxmax()
@@ -109,7 +111,7 @@ def correlation_vif_analysis(df, save_path='results/correlation_vif_analysis.png
                 f'{vif:.1f}', ha='center', va='bottom')
     
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300, bbox_inches='tight')
+    plt.savefig(save_path, dpi=300, bbox_inches='tight', metadata=None)
     plt.show()
     
     # Feature selection recommendations
@@ -219,8 +221,8 @@ def hourly_error_analysis(actual, predicted, timestamps, save_path='results/hour
     ax2.legend()
     
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300, bbox_inches='tight')
-    plt.show()
+    plt.savefig(save_path, dpi=300, bbox_inches='tight', metadata=None)
+    # plt.show()  # Commented out for non-interactive backend
     
     # Operational interpretation
     morning_errors = hourly_stats.loc[6:10, 'Mean_Error'].mean()
@@ -411,8 +413,8 @@ def energy_market_impact_analysis(mae, rmse, capacity_kw=1000, save_path='result
     ax2.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig(save_path, dpi=300, bbox_inches='tight')
-    plt.show()
+    plt.savefig(save_path, dpi=300, bbox_inches='tight', metadata=None)
+    # plt.show()  # Commented out for non-interactive backend
     
     analysis = f"""
     ENERGY MARKET IMPACT ANALYSIS:

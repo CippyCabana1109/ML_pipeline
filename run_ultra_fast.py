@@ -132,7 +132,7 @@ def ultra_fast_models():
     plt.savefig('results/ultra_fast_plot.png', dpi=150)
     plt.show()
     
-    print(f"\n✅ Files created:")
+    print(f"\nFiles created:")
     print(f"   - results/ultra_fast_results.csv")
     print(f"   - results/ultra_fast_plot.png")
     

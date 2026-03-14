@@ -74,9 +74,9 @@ def ultra_fast_forecasting():
     print(f"📊 BEST MAE: {best_mae:.2f}W")
     
     if total_time < 30:
-        print("✅ SUCCESS: Completed in under 30 seconds!")
+        print("SUCCESS: Completed in under 30 seconds!")
     else:
-        print(f"⚠️  Took {total_time:.1f}s (exceeded 30s target)")
+        print(f"WARNING: Took {total_time:.1f}s (exceeded 30s target)")
     
     return results_df
 

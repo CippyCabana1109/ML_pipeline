@@ -135,9 +135,9 @@ def run_30sec_forecasting():
     
     # Success check
     if total_time < 30:
-        print("✅ SUCCESS: Completed in under 30 seconds!")
+        print("SUCCESS: Completed in under 30 seconds!")
     else:
-        print(f"⚠️  Took {total_time:.1f}s (exceeded 30s target)")
+        print(f"WARNING: Took {total_time:.1f}s (exceeded 30s target)")
     
     print(f"\n📁 Files created:")
     print(f"   - results/30sec_results.csv")

@@ -20,21 +20,23 @@ def run_phase(phase_name, script_path):
     
     try:
         start_time = time.time()
-        result = subprocess.run(['python', script_path], 
-                              capture_output=True, 
-                              text=True, 
-                              check=True)
+        result = subprocess.run(
+            ['python', script_path],
+            capture_output=True,
+            text=True,
+            check=True,
+        )
         end_time = time.time()
-        
+
         print(result.stdout)
         if result.stderr:
             print(f"Warnings: {result.stderr}")
-        
+
         phase_time = end_time - start_time
-        print(f"✅ {phase_name} completed in {phase_time:.1f}s")
+        print(f"[OK] {phase_name} completed in {phase_time:.1f}s")
         return True, phase_time
     except subprocess.CalledProcessError as e:
-        print(f"❌ {phase_name} failed:")
+        print(f"[ERROR] {phase_name} failed:")
         print(e.stderr)
         return False, 0
 
@@ -80,15 +82,15 @@ def main():
     print(f"Total time: {total_time:.1f}s")
     
     for phase in completed:
-        print(f"✅ {phase}")
+        print(f"[OK] {phase}")
     
     if len(completed) == len(phases):
-        print("\n🚀 QUICK ANALYSIS COMPLETE!")
+        print("\nQUICK ANALYSIS COMPLETE!")
         print("📁 Results:")
         print("   - results/simple_model_results.csv")
         print("   - results/simple_summary.csv")
         print("   - results/simple_comparison.png")
-        print("\n🏆 To find best model:")
+        print("\nTo find best model:")
         print("   1. Open results/simple_summary.csv")
         print("   2. Look for lowest MAE value")
     else:
