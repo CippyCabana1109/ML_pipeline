@@ -58,7 +58,7 @@ def main():
         ("SARIMAX Model", "src/models/sarimax_model.py"),
         ("XGBoost Model", "src/models/xgboost_model.py"),
         ("Prophet Model", "src/models/prophet_model.py"),
-        ("Hybrid Model", "src/models/hybrid_model.py"),
+        ("Optimized Hybrid Model", "src/models/optimized_hybrid.py"),
         ("Comprehensive Evaluation", "src/evaluation/comprehensive_evaluation.py")
     ]
     
