@@ -1,5 +1,0 @@
-Model,MAE (W),RMSE (W),sMAPE (%),R²,MAE Rank,RMSE Rank,sMAPE Rank,R² Rank,Weighted Rank,Overall Performance
-XGBoost,771.27,1018.7,3.34,0.999,1.0,1.0,1.0,1.0,1.0,Excellent
-Prophet+XGBoost,2932.11,3497.33,31.36,0.9876,2.0,2.0,2.0,2.0,2.0,Good
-Prophet,7435.28,9525.91,32.64,0.9082,3.0,3.0,3.0,3.0,3.0,Fair
-SARIMAX,27774.28,31491.35,77.82,-0.0033,4.0,4.0,4.0,4.0,4.0,Poor
