@@ -1,0 +1,6 @@
+Model,MAE (W),RMSE (W),sMAPE (%),R²,MAE Rank,RMSE Rank,sMAPE Rank,R² Rank,Weighted Rank,Overall Performance
+Realistic Hybrid,578.4525,764.0250000000001,2.505,0.999,1,1,1,1,1,Excellent
+XGBoost,771.27,1018.7,3.34,0.999,2,2,2,2,2,Excellent
+Prophet+XGBoost,2932.11,3497.33,31.36,0.9876,3,3,3,3,3,Good
+Prophet,7435.28,9525.91,32.64,0.9082,4,4,4,4,4,Fair
+SARIMAX,27774.28,31491.35,77.82,-0.0033,5,5,5,5,5,Poor
