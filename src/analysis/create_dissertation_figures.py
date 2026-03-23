@@ -5,9 +5,14 @@ Each figure created separately for easy insertion into dissertation report
 
 import pandas as pd
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 from matplotlib.patches import Rectangle
+from PIL import Image
+import shutil
+import os
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -69,11 +74,15 @@ def create_weather_correlation_matrix():
     ax.tick_params(axis='y', labelsize=10)
     
     plt.tight_layout()
-    plt.savefig('results/figures/Figure_1_Weather_Correlation_Matrix.png', 
-                dpi=300, bbox_inches='tight', facecolor='white')
+    out_path = 'results/figures/Figure_1_Weather_Correlation_Matrix.png'
+    diss_path = 'DISSERTATION_FIGURES/Figure_Weather_Correlation.png'
+    plt.savefig(out_path, dpi=300, bbox_inches='tight', facecolor='white')
+
+    # Also save to dissertation figures folder
+    plt.savefig(diss_path, dpi=300, bbox_inches='tight', facecolor='white')
     plt.close()
     
-    print("✓ Figure 1: Weather Correlation Matrix saved")
+    print(f"✓ Figure 1: Weather Correlation Matrix saved to {out_path} and {diss_path}")
 
 def create_vif_analysis():
     """Create clean VIF analysis figure"""
@@ -373,63 +382,59 @@ def create_time_series_example():
     print("✓ Figure 6: Time Series Example saved")
 
 def create_optimal_bidding_strategy():
-    """Create clean optimal bidding strategy figure"""
-    print("Creating optimal bidding strategy figure...")
-    
-    # Generate sample data
-    market_prices = np.linspace(20, 100, 50)  # €/MWh
-    min_commitment = 3000  # W
-    
-    # Calculate optimal bids (simplified model)
-    optimal_bids = []
-    additional_commitment = []
-    
-    for price in market_prices:
-        # Simplified optimization: higher price = more aggressive bidding
-        base_bid = min_commitment
-        additional = min(2000, (price - 20) * 30)  # Price-dependent additional commitment
-        optimal_bid = base_bid + additional
-        
-        optimal_bids.append(optimal_bid)
-        additional_commitment.append(additional)
-    
-    # Create figure
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
-    
-    # Plot 1: Optimal Bid vs Market Price
-    ax1.plot(market_prices, optimal_bids, 'b-', linewidth=2.5, label='Optimal Bid')
-    ax1.axhline(y=min_commitment, color='red', linestyle='--', linewidth=2, 
-                label=f'Minimum Commitment: {min_commitment}W')
-    ax1.fill_between(market_prices, min_commitment, optimal_bids, alpha=0.3, color='blue')
-    
-    ax1.set_title('Optimal Bidding Strategy vs Market Price', fontweight='bold')
-    ax1.set_xlabel('Market Price (€/MWh)', fontsize=12)
-    ax1.set_ylabel('Optimal Bid (W)', fontsize=12)
-    ax1.legend()
-    ax1.grid(True, alpha=0.3)
-    
-    # Plot 2: Additional Commitment Percentage
-    additional_pct = [(add/min_commitment)*100 for add in additional_commitment]
-    
-    ax2.plot(market_prices, additional_pct, 'g-', linewidth=2.5, label='Additional Commitment')
-    ax2.fill_between(market_prices, 0, additional_pct, alpha=0.3, color='green')
-    
-    # Add reference lines
-    ax2.axhline(y=5, color='orange', linestyle='--', alpha=0.7, label='Conservative (+5%)')
-    ax2.axhline(y=15, color='red', linestyle='--', alpha=0.7, label='Aggressive (+15%)')
-    
-    ax2.set_title('Additional Commitment Above Minimum', fontweight='bold')
-    ax2.set_xlabel('Market Price (€/MWh)', fontsize=12)
-    ax2.set_ylabel('Additional Commitment (%)', fontsize=12)
-    ax2.legend()
-    ax2.grid(True, alpha=0.3)
-    
+    """Create imbalance pricing figure for Figure 7"""
+    print("Creating imbalance pricing figure for Figure 7...")
+
+    # Supply and demand curves in an imbalance market context
+    Q = np.linspace(0, 10, 200)
+    P_supply = 20 + 6 * Q  # rising supply curve
+    P_demand = 80 - 4 * Q  # falling demand curve
+
+    # Equilibrium
+    Q_eq = (80 - 20) / (6 + 4)
+    P_eq = 20 + 6 * Q_eq
+
+    # Imbalance point (example)
+    Q_imbalance = Q_eq + 2.0
+    P_imbalance = 20 + 6 * Q_imbalance
+
+    fig, ax = plt.subplots(figsize=(12, 10))
+
+    ax.plot(Q, P_supply, label='Supply (reserve activation cost)', color='red', linewidth=2.2)
+    ax.plot(Q, P_demand, label='Demand (BRP price responsiveness)', color='blue', linewidth=2.2)
+
+    ax.fill_between(Q, P_supply, P_demand, where=(P_demand >= P_supply), 
+                    color='gray', alpha=0.20, label='Market surplus area')
+
+    ax.scatter([Q_eq], [P_eq], color='black', zorder=5, label='Equilibrium (Q, P)')
+    ax.annotate('Equilibrium', xy=(Q_eq, P_eq), xytext=(Q_eq + 1.0, P_eq + 10),
+                arrowprops=dict(arrowstyle='->', color='black'))
+
+    ax.scatter([Q_imbalance], [P_imbalance], color='green', zorder=5, label='System imbalance point')
+    ax.annotate('Imbalance direction', xy=(Q_imbalance, P_imbalance), xytext=(Q_imbalance + 0.4, P_imbalance + 15),
+                arrowprops=dict(arrowstyle='->', color='green'))
+
+    # Supply/Demand shifters text boxes
+    ax.text(1.0, 70, 'Supply shifters:\n- FRR availability\n- IGCC import', fontsize=10,
+            bbox=dict(facecolor='white', alpha=0.8, edgecolor='gray'))
+    ax.text(6.0, 25, 'Demand shifters:\n- Wind/solar forecast error\n- Intraday price', fontsize=10,
+            bbox=dict(facecolor='white', alpha=0.8, edgecolor='gray'))
+
+    ax.set_title('Imbalance Pricing Mechanism in Electricity Market', fontsize=16, fontweight='bold')
+    ax.set_xlabel('System imbalance (MW)', fontsize=14)
+    ax.set_ylabel('Imbalance price (€/MWh)', fontsize=14)
+    ax.legend(fontsize=10, loc='upper right')
+    ax.grid(True, alpha=0.3)
+
+    # Add reference lines for imbalance effect
+    ax.axvline(Q_eq, color='black', linestyle='--', alpha=0.7)
+    ax.axhline(P_eq, color='black', linestyle='--', alpha=0.7)
+
     plt.tight_layout()
-    plt.savefig('results/figures/Figure_7_Optimal_Bidding_Strategy.png', 
-                dpi=300, bbox_inches='tight', facecolor='white')
+    plt.savefig('results/figures/Figure_7_Optimal_Bidding_Strategy.png', dpi=300, bbox_inches='tight', facecolor='white')
     plt.close()
-    
-    print("✓ Figure 7: Optimal Bidding Strategy saved")
+
+    print('✓ Figure 7: Imbalance Pricing Mechanisms saved')
 
 def create_revenue_optimization():
     """Create clean revenue optimization figure"""

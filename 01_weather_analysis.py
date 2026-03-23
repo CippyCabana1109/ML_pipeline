@@ -203,12 +203,12 @@ def main():
     print("WEATHER ANALYSIS COMPLETED")
     print("=" * 80)
     
-    print(f"\n📊 RESULTS:")
+    print(f"\nDATA RESULTS:")
     print(f"• Original Variables: 15")
     print(f"• Selected Variables: {len(final_variables)}")
     print(f"• Files Created: 4")
     
-    print("\n📁 FILES CREATED:")
+    print("\nFILES CREATED:")
     print("• Individual_Graph_Correlation.png - Correlation matrix")
     print("• Individual_Graph_VIF.png - VIF analysis")
     print("• Complete_Weather_Analysis_Report.md - Summary report")

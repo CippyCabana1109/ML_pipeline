@@ -273,7 +273,7 @@ RESULTS:
     plt.savefig('DISSERTATION_FIGURES/Individual_Graph_Equation2.png', dpi=300, bbox_inches='tight', facecolor='white')
     plt.close()
     
-    print("✓ Equation 2 visualization saved")
+    print("OK Equation 2 visualization saved")
 
 def create_results_tables(results_df, optimal_df):
     """Create results tables"""
@@ -312,7 +312,7 @@ def create_results_tables(results_df, optimal_df):
     combined_df = pd.merge(results_df, optimal_df, on='hour', suffixes=('_eq1', '_eq2'))
     combined_df.to_csv('DISSERTATION_FIGURES/Equations_Detailed_Results.csv', index=False)
     
-    print("✓ Results tables saved")
+    print("OK Results tables saved")
 
 def create_academic_report():
     """Create academic report"""
@@ -348,7 +348,7 @@ B_t* = arg max_B_t [P_t × B_t - C_t^pen × E[max(B_t - G_t, 0)]]
     with open('DISSERTATION_FIGURES/Equations_Academic_Report.md', 'w', encoding='utf-8') as f:
         f.write(report)
     
-    print("✓ Academic report created")
+    print("OK Academic report created")
 
 def main():
     """Main function"""
@@ -369,12 +369,12 @@ def main():
     print("ECONOMIC MODELING COMPLETED")
     print("=" * 80)
     
-    print(f"\n📊 RESULTS:")
+    print(f"\nDATA RESULTS:")
     print(f"• Average Minimum Commitment: {results_df['commit_percentage'].mean():.1f}%")
     print(f"• Average Final Bid: {optimal_df['final_bid_percentage'].mean():.1f}%")
     print(f"• Average Additional Recovery: {optimal_df['recovery_percentage'].mean():.1f}%")
     
-    print("\n📁 FILES CREATED:")
+    print("\nFILES CREATED:")
     print("• Individual_Graph_Equation1.png - Equation 1 visualization")
     print("• Individual_Graph_Equation2.png - Equation 2 visualization")
     print("• Equations_Results_Summary.csv - Summary statistics")

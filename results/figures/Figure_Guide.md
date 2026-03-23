@@ -79,14 +79,15 @@ All figures are created at 300 DPI for publication quality and can be directly i
 
 ---
 
-## **Figure 7: Optimal Bidding Strategy**
+## **Figure 7: Imbalance Pricing Mechanisms**
 **File**: `Figure_7_Optimal_Bidding_Strategy.png`  
 **Size**: 12×10 inches  
-**Purpose**: Market price vs optimal bidding relationship  
+**Purpose**: Supply and demand dynamics in electricity markets with imbalance pricing  
 **Key Features**:
-- Two-panel analysis
-- Reference lines for strategies
-- Clear trend visualization
+- Supply/demand curves with equilibrium point
+- Imbalance price mechanisms (RRP and rBRP)
+- Supply/demand shifters (renewables, storage, pricing)
+- Cost components (energy costs, balancing costs)
 **Insertion**: Use as-is, no cropping needed
 
 ---
