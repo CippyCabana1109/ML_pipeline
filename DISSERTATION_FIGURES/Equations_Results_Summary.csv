@@ -1,10 +1,13 @@
 Metric,Value
 Average Minimum Commitment (%),30.067854568680644
-Average Final Bid (%),71.08698871991787
-Average Additional Recovery (%),65.54743727824712
+Average Final Bid (%),43.426818985782425
+Average Additional Recovery (%),23.550883972808425
 Average Forecast Generation (W),280.8955773244276
 Average Minimum Energy (W),129.34499730837092
-Average Optimal Bid (W),240.4217006021643
+Average Final Bid (W),171.96511107298457
 Performance Ratio,0.85
 Confidence Factor,1.96
-Penalty Cost ($/MWh),100.0
+Penalty Coefficient ($/MWh),100.0
+Tolerance Band (%),5.0
+Average Expected Penalty ($),5012.055634160749
+Average Expected Lost Revenue ($),7085.400822795183
