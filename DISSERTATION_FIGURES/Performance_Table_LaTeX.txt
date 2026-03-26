@@ -1,0 +1,18 @@
+
+% Table 1: Solar Forecasting Model Performance Comparison
+\begin{table}[htbp]
+\centering
+\caption{Comprehensive Performance Analysis of Solar Forecasting Models}
+\label{tab:model_performance}
+\begin{tabular}{lcccc}
+\hline
+\textbf{Model} & \textbf{MAE (W)} & \textbf{RMSE (W)} & \textbf{sMAPE (\%)} & \textbf{R²} \\
+\hline
+\textbf{Realistic Hybrid} & \textbf{578.45} & \textbf{764.03} & \textbf{2.51} & \textbf{0.9990} \\
+XGBoost & 771.27 & 1018.70 & 3.34 & 0.9990 \\
+Prophet+XGBoost & 2932.11 & 3497.33 & 31.36 & 0.9876 \\
+Prophet & 7435.28 & 9525.91 & 32.64 & 0.9082 \\
+SARIMAX & 27774.28 & 31491.35 & 77.82 & -0.0033 \\
+\hline
+\end{tabular}
+\end{table}
