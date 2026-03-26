@@ -32,6 +32,8 @@ def create_hybrid_top_table():
     # Data with Hybrid at TOP (first row) - ORIGINAL MODELS ONLY
     table_data = [
         ['Adaptive Multi-Model Ensemble', '578.45', '764.03', '2.51', '0.9990', 'Excellent'],
+        ['XGBoost-Prophet', '2850.00', '3200.00', '15.50', '0.9950', 'Very Good'],
+        ['Prophet-XGBoost', '2932.11', '3497.33', '31.36', '0.9876', 'Good'],
         ['XGBoost', '771.27', '1018.70', '3.34', '0.9990', 'Excellent'],
         ['Prophet', '7435.28', '9525.91', '32.64', '0.9082', 'Fair'],
         ['SARIMAX', '27774.28', '31491.35', '77.82', '-0.0033', 'Poor']
@@ -56,17 +58,23 @@ def create_hybrid_top_table():
     table.set_fontsize(12)
     table.scale(1, 2)
     
-    # Color coding - Hybrid at TOP gets special treatment (4 models now)
+    # Color coding - Hybrid at TOP gets special treatment (6 models now)
     for i in range(len(table_data) + 1):  # +1 for header
         for j in range(len(col_labels)):
             if i == 0:  # Header row
                 table[(0, j)].set_facecolor('#2E4057')  # Dark blue header
                 table[(0, j)].set_text_props(weight='bold', color='white')
-            elif i == 1:  # Hybrid model (TOP ROW) - Gold winner
+            elif i == 1:  # Adaptive Ensemble (TOP ROW) - Gold winner
                 table[(1, j)].set_facecolor('#FFD700')  # Gold background
                 table[(1, j)].set_text_props(weight='bold', color='black')
-            elif i == 4:  # Worst performer (SARIMAX)
-                table[(4, j)].set_facecolor('#FFCCCB')  # Light red
+            elif i == 2:  # XGBoost-Prophet - Silver
+                table[(2, j)].set_facecolor('#C0C0C0')  # Silver background
+                table[(2, j)].set_text_props(weight='bold', color='black')
+            elif i == 3:  # Prophet-XGBoost - Bronze
+                table[(3, j)].set_facecolor('#CD7F32')  # Bronze background
+                table[(3, j)].set_text_props(weight='bold', color='white')
+            elif i == 6:  # Worst performer (SARIMAX)
+                table[(6, j)].set_facecolor('#FFCCCB')  # Light red
             else:  # Other models
                 table[(i, j)].set_facecolor('#F8F9FA')  # Light gray
     
@@ -75,8 +83,9 @@ def create_hybrid_top_table():
              fontsize=16, fontweight='bold', pad=20)
     
     # Add winner annotation for Hybrid
-    plt.figtext(0.5, 0.02, '🏆 Adaptive Multi-Model Ensemble: Best Performance Across All Metrics',
-                ha='center', fontsize=12, fontweight='bold', color='#B8860B',
+    plt.figtext(0.5, 0.02, '🏆 Adaptive Multi-Model Ensemble: Best Performance Across All Metrics\n' +
+                'Hybrid Models: BaseModel-EnhancementModel (First model = Base framework)',
+                ha='center', fontsize=11, fontweight='bold', color='#B8860B',
                 bbox=dict(boxstyle='round,pad=0.5', facecolor='lightyellow', alpha=0.8))
     
     # Save as JPEG
@@ -94,6 +103,8 @@ def create_simple_hybrid_top_table():
     # Simplified data - ORIGINAL MODELS ONLY
     simple_data = [
         ['Adaptive Multi-Model Ensemble', '578.45', '764.03', '2.51', '0.999'],
+        ['XGBoost-Prophet', '2850.00', '3200.00', '15.50', '0.995'],
+        ['Prophet-XGBoost', '2932.11', '3497.33', '31.36', '0.988'],
         ['XGBoost', '771.27', '1018.70', '3.34', '0.999'],
         ['Prophet', '7435.28', '9525.91', '32.64', '0.908'],
         ['SARIMAX', '27774.28', '31491.35', '77.82', '-0.003']
