@@ -29,11 +29,10 @@ def create_hybrid_top_table():
     """Create table with Hybrid model at TOP"""
     print("Creating table with Hybrid model at TOP...")
     
-    # Data with Hybrid at TOP (first row)
+    # Data with Hybrid at TOP (first row) - ORIGINAL MODELS ONLY
     table_data = [
         ['Realistic Hybrid', '578.45', '764.03', '2.51', '0.9990', 'Excellent'],
         ['XGBoost', '771.27', '1018.70', '3.34', '0.9990', 'Excellent'],
-        ['Prophet+XGBoost', '2932.11', '3497.33', '31.36', '0.9876', 'Good'],
         ['Prophet', '7435.28', '9525.91', '32.64', '0.9082', 'Fair'],
         ['SARIMAX', '27774.28', '31491.35', '77.82', '-0.0033', 'Poor']
     ]
@@ -57,7 +56,7 @@ def create_hybrid_top_table():
     table.set_fontsize(12)
     table.scale(1, 2)
     
-    # Color coding - Hybrid at TOP gets special treatment
+    # Color coding - Hybrid at TOP gets special treatment (4 models now)
     for i in range(len(table_data) + 1):  # +1 for header
         for j in range(len(col_labels)):
             if i == 0:  # Header row
@@ -66,8 +65,8 @@ def create_hybrid_top_table():
             elif i == 1:  # Hybrid model (TOP ROW) - Gold winner
                 table[(1, j)].set_facecolor('#FFD700')  # Gold background
                 table[(1, j)].set_text_props(weight='bold', color='black')
-            elif i == 5:  # Worst performer
-                table[(5, j)].set_facecolor('#FFCCCB')  # Light red
+            elif i == 4:  # Worst performer (SARIMAX)
+                table[(4, j)].set_facecolor('#FFCCCB')  # Light red
             else:  # Other models
                 table[(i, j)].set_facecolor('#F8F9FA')  # Light gray
     
@@ -92,11 +91,10 @@ def create_simple_hybrid_top_table():
     """Create a simpler version focused on Hybrid at top"""
     print("Creating simple Hybrid top table...")
     
-    # Simplified data
+    # Simplified data - ORIGINAL MODELS ONLY
     simple_data = [
         ['Realistic Hybrid', '578.45', '764.03', '2.51', '0.999'],
         ['XGBoost', '771.27', '1018.70', '3.34', '0.999'],
-        ['Prophet+XGBoost', '2932.11', '3497.33', '31.36', '0.988'],
         ['Prophet', '7435.28', '9525.91', '32.64', '0.908'],
         ['SARIMAX', '27774.28', '31491.35', '77.82', '-0.003']
     ]
