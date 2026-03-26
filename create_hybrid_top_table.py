@@ -31,7 +31,7 @@ def create_hybrid_top_table():
     
     # Data with Hybrid at TOP (first row) - ORIGINAL MODELS ONLY
     table_data = [
-        ['Realistic Hybrid', '578.45', '764.03', '2.51', '0.9990', 'Excellent'],
+        ['Adaptive Multi-Model Ensemble', '578.45', '764.03', '2.51', '0.9990', 'Excellent'],
         ['XGBoost', '771.27', '1018.70', '3.34', '0.9990', 'Excellent'],
         ['Prophet', '7435.28', '9525.91', '32.64', '0.9082', 'Fair'],
         ['SARIMAX', '27774.28', '31491.35', '77.82', '-0.0033', 'Poor']
@@ -75,7 +75,7 @@ def create_hybrid_top_table():
              fontsize=16, fontweight='bold', pad=20)
     
     # Add winner annotation for Hybrid
-    plt.figtext(0.5, 0.02, '🏆 Realistic Hybrid Model: Best Performance Across All Metrics',
+    plt.figtext(0.5, 0.02, '🏆 Adaptive Multi-Model Ensemble: Best Performance Across All Metrics',
                 ha='center', fontsize=12, fontweight='bold', color='#B8860B',
                 bbox=dict(boxstyle='round,pad=0.5', facecolor='lightyellow', alpha=0.8))
     
@@ -93,7 +93,7 @@ def create_simple_hybrid_top_table():
     
     # Simplified data - ORIGINAL MODELS ONLY
     simple_data = [
-        ['Realistic Hybrid', '578.45', '764.03', '2.51', '0.999'],
+        ['Adaptive Multi-Model Ensemble', '578.45', '764.03', '2.51', '0.999'],
         ['XGBoost', '771.27', '1018.70', '3.34', '0.999'],
         ['Prophet', '7435.28', '9525.91', '32.64', '0.908'],
         ['SARIMAX', '27774.28', '31491.35', '77.82', '-0.003']
