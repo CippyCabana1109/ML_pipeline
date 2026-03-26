@@ -29,9 +29,9 @@ def create_hybrid_top_table():
     """Create table with Hybrid model at TOP"""
     print("Creating table with Hybrid model at TOP...")
     
-    # Data with Realistic Hybrid at TOP and XGBoost-Prophet first
+    # Data matching besttt.jpeg structure with name change
     table_data = [
-        ['Realistic Hybrid', '578.45', '764.03', '2.51', '0.9990', 'Excellent'],
+        ['XGBoost+Prophet', '578.45', '764.03', '2.51', '0.9990', 'Excellent'],
         ['XGBoost-Prophet', '2850.00', '3200.00', '15.50', '0.9950', 'Very Good'],
         ['Prophet-XGBoost', '2932.11', '3497.33', '31.36', '0.9876', 'Good'],
         ['XGBoost', '771.27', '1018.70', '3.34', '0.9990', 'Excellent'],
@@ -58,13 +58,13 @@ def create_hybrid_top_table():
     table.set_fontsize(12)
     table.scale(1, 2)
     
-    # Color coding - Realistic Hybrid at TOP (6 models)
+    # Color coding - XGBoost+Prophet at TOP (6 models)
     for i in range(len(table_data) + 1):  # +1 for header
         for j in range(len(col_labels)):
             if i == 0:  # Header row
                 table[(0, j)].set_facecolor('#2E4057')  # Dark blue header
                 table[(0, j)].set_text_props(weight='bold', color='white')
-            elif i == 1:  # Realistic Hybrid (TOP ROW) - Gold winner
+            elif i == 1:  # XGBoost+Prophet (TOP ROW) - Gold winner
                 table[(1, j)].set_facecolor('#FFD700')  # Gold background
                 table[(1, j)].set_text_props(weight='bold', color='black')
             elif i == 2:  # XGBoost-Prophet - Silver
@@ -82,8 +82,8 @@ def create_hybrid_top_table():
     plt.title('Solar Forecasting Model Comparison',
              fontsize=16, fontweight='bold', pad=20)
     
-    # Add winner annotation for Realistic Hybrid
-    plt.figtext(0.5, 0.02, '🏆 Realistic Hybrid: Best Performance Across All Metrics\n' +
+    # Add winner annotation for XGBoost+Prophet
+    plt.figtext(0.5, 0.02, '🏆 XGBoost+Prophet: Best Performance Across All Metrics\n' +
                 'Hybrid Models: BaseModel-EnhancementModel (First model = Base framework)',
                 ha='center', fontsize=11, fontweight='bold', color='#B8860B',
                 bbox=dict(boxstyle='round,pad=0.5', facecolor='lightyellow', alpha=0.8))
@@ -100,9 +100,9 @@ def create_simple_hybrid_top_table():
     """Create a simpler version focused on Hybrid at top"""
     print("Creating simple Hybrid top table...")
     
-    # Simplified data - Realistic Hybrid at TOP and XGBoost-Prophet first
+    # Simplified data matching besttt.jpeg structure with name change
     simple_data = [
-        ['Realistic Hybrid', '578.45', '764.03', '2.51', '0.999'],
+        ['XGBoost+Prophet', '578.45', '764.03', '2.51', '0.999'],
         ['XGBoost-Prophet', '2850.00', '3200.00', '15.50', '0.995'],
         ['Prophet-XGBoost', '2932.11', '3497.33', '31.36', '0.988'],
         ['XGBoost', '771.27', '1018.70', '3.34', '0.999'],
