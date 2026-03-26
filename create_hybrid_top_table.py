@@ -72,7 +72,7 @@ def create_hybrid_top_table():
                 table[(i, j)].set_facecolor('#F8F9FA')  # Light gray
     
     # Add title
-    plt.title('Solar Forecasting Model Performance Comparison\nHybrid Model Demonstrates Superior Performance',
+    plt.title('Solar Forecasting Model Comparison',
              fontsize=16, fontweight='bold', pad=20)
     
     # Add winner annotation for Hybrid
@@ -133,7 +133,7 @@ def create_simple_hybrid_top_table():
                 table[(i, j)].set_facecolor('#F5F5F5')
     
     # Title
-    plt.title('Table 1: Model Performance Comparison - Hybrid Model at Top',
+    plt.title('Table 1: Model Comparison',
              fontsize=14, fontweight='bold', pad=15)
     
     # Save as JPEG
